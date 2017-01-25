@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <title>Receiver</title>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <script type="text/javascript" src="/socket.io/socket.io.js"></script>
+
+</head>
+
+<body>
+  <img id="play" />
+  <div id="logger"></div>
+  <script>
+      const socket = io();
+      socket.on('stream', (image) => {
+        const img = document.querySelector('#play');
+        img.src = image;
+
+        const log = document.querySelector('#logger');
+        // log.innerHTML = image;
+      });
+    </script>
+</body>
+
+</htmlu

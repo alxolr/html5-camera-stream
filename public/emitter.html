@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <title>Wideo Cam emitter</title>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <script type="text/javascript" src="/socket.io/socket.io.js"></script>
+</head>
+
+<body>
+  <video id="video" width="680" height="320" controls autoplay="true">
+  </video>
+  <canvas id="preview"></canvas>
+  <div id="logger"></div>
+
+  <script type="text/javascript">
+    (function () {
+      const canvas = document.getElementById('preview');
+      const ctx = canvas.getContext('2d');
+
+      canvas.width = 800;
+      canvas.height = 600;
+
+      const video = document.getElementById('video');
+      const socket = io();
+
+      function logger(msg) {
+        document.querySelector("#logger").innerHTML = msg;
+      }
+
+      function loadCam(stream) {
+        video.src = window.URL.createObjectURL(stream);
+        logger('Camera is working [OK]');
+      }
+
+      function loadFail() {
+        logger('Web cam is not connected!');
+      }
+
+      function viewVideo(video, ctx) {
+        ctx.drawImage(video, 0, 0);
+        socket.emit('stream', canvas.toDataURL('image/webp'));
+      }
+
+      navigator.getUserMedia = (navigator.getUserMedia
+        || navigator.webkitGetUserMedia
+        || navigator.mozGetUserMedia
+        || navigator.msgGetUserMedia
+      );
+
+      if (navigator.getUserMedia) {
+        navigator.getUserMedia({ video: true }, loadCam, loadFail);
+      }
+
+      setInterval(function(){
+        viewVideo(video, ctx);
+      }, 50);
+    })();
+  </script>
+</body>
+
+</html>
